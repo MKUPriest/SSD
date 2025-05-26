@@ -44,7 +44,10 @@ public class AuctionBlockchainRepository implements Repository<Auction, String> 
     }
 
     private AuctionBlockchainRepository() {
-        this.miner = new Miner(new Blockchain());
+        List<Blockchain> blockchains = new ArrayList<>();
+        Blockchain blockchain = new Blockchain();
+        blockchains.add(blockchain);
+        this.miner = new Miner(blockchains);
         inMemoryAuctions = new ArrayList<>();
     }
 
@@ -99,7 +102,7 @@ public class AuctionBlockchainRepository implements Repository<Auction, String> 
             }
         }
 
-        System.out.println(wantedAuction);
+        //System.out.println(wantedAuction);
 
         Transaction transaction = new Transaction(auction.getAuctionedItem(),
                 auction.getClosingTime(),
@@ -110,7 +113,7 @@ public class AuctionBlockchainRepository implements Repository<Auction, String> 
 
         transaction.setSignature(auction.getCurrentBid().getUser().sign(transaction.getData()));
 
-        System.out.println(wantedAuction);
+        //System.out.println(wantedAuction);
 
         if (wantedAuction != null) {
             inMemoryAuctions.remove(wantedAuction);
@@ -197,18 +200,24 @@ public class AuctionBlockchainRepository implements Repository<Auction, String> 
 
     public List<Auction> getWinningBids(UserDTO currentUser) {
         User user = UserMapper.convertToUser(currentUser);
-        List<Auction> winningAuctions = new ArrayList<>();
+        List<Auction> subbedAuctions = new ArrayList<>();
         Auction auxAuc = null;
+        int size = 0;
+        if(user.getSubbedAuctions() != null){
+            size = user.getSubbedAuctions().size();
+        }
         for(InMemoryAuction aux : inMemoryAuctions){
-            if(aux.bid.getUser().getWallet().getAddress().equals(user.getWallet().getAddress())){
-                auxAuc = new Auction(aux.auctionedItem,
-                        aux.closingTime,
-                        aux.bid,
-                        aux.isActive);
-                winningAuctions.add(auxAuc);
+            for(int i = 0; i < size; i++) {
+                if (aux.auctionedItem.getName().equals(user.getSubbedAuctions().get(i).getAuctionedItem().getName())) {
+                    auxAuc = new Auction(aux.auctionedItem,
+                            aux.closingTime,
+                            aux.bid,
+                            aux.isActive);
+                    subbedAuctions.add(auxAuc);
+                }
             }
         }
-        return winningAuctions;
+        return subbedAuctions;
     }
 
     public List<Auction> getOwnedItems(UserDTO currentUser) {

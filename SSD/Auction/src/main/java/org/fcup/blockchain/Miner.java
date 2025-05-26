@@ -13,21 +13,22 @@ import java.util.List;
 
 public class Miner {
 
-    private Blockchain blockchain;
+    private List<Blockchain> blockchains;
     private List<Transaction> mempoolBids;
 
-    public Miner(Blockchain blockchain) {
-        this.blockchain = blockchain;
+    public Miner(List<Blockchain> blockchains) {
+        this.blockchains = blockchains;
         mempoolBids = new ArrayList<Transaction>();
     }
 
-    public Blockchain getBlockchain() {
-        return blockchain;
+    public List<Blockchain> getBlockchain() {
+        return blockchains;
     }
 
     public boolean replaceChain(Blockchain newChain) throws Exception {
         if(isChainValid(newChain)){
-            blockchain = newChain;
+            blockchains.clear();
+            blockchains.add(newChain);
             return true;
         }
         return false;
@@ -54,8 +55,10 @@ public class Miner {
     }
 
     public boolean isChainValid(Blockchain newChain) throws Exception {
-        if(blockchain.getChain().size() > newChain.getChain().size()){
-            return false;
+        for(Blockchain aux : blockchains) {
+            if (aux.getChain().size() > newChain.getChain().size()) {
+                return false;
+            }
         }
         Block previousBlock = newChain.getChain().getFirst();
 
@@ -75,7 +78,7 @@ public class Miner {
     public Block mineBlock() {
         List<Transaction> bids = new ArrayList<>();
         bids.add(mempoolBids.getFirst());
-        Block block = new Block(blockchain.getChain().getLast().getHash(),
+        Block block = new Block(blockchains.getFirst().getChain().getLast().getHash(),
                 new Date().getTime(),
                 bids);
         String target = new String(new char[5]).replace('\0', '0');
@@ -111,12 +114,26 @@ public class Miner {
     }
 
     public Transaction addConfirmedBlock(Block block){
-        blockchain.addBlock(block);
-        if(block.getTransactions().getFirst().equals(mempoolBids.getFirst())) {
+        Blockchain biggest = null;
+
+        for (Blockchain aux : blockchains) {
+            if (biggest == null || aux.getChain().size() > biggest.getChain().size()) {
+                biggest = aux;
+            }
+        }
+
+        blockchains.clear();
+        blockchains.add(biggest);
+
+        blockchains.getFirst().addBlock(block);
+
+        if (block.getTransactions().getFirst().equals(mempoolBids.getFirst())) {
             mempoolBids.removeFirst();
         }
+
         return block.getTransactions().getFirst();
     }
+
 
     public boolean addTransaction(Transaction transaction){
         if(mempoolBids.size() > 10){
@@ -141,8 +158,8 @@ public class Miner {
     public List<Transaction> getUpdatedAuctions() {
         List<Item> diff_items = new ArrayList<>();
         List<Transaction> updatedTransactions = new ArrayList<>();
-        for(Block aux : blockchain.getChain()){
-            if(blockchain.getChain().getFirst() != aux) {
+        for(Block aux : blockchains.getFirst().getChain()){
+            if(blockchains.getFirst().getChain().getFirst() != aux) {
                 Item aux_item = aux.getTransactions().getFirst().getItem();
                 if (!diff_items.contains(aux_item)) {
                     diff_items.add(aux_item);

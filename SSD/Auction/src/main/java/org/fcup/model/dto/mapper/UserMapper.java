@@ -9,7 +9,7 @@ public class UserMapper {
         if (userDTO == null)
             return null;
 
-        return new User(userDTO.address(), userDTO.privateKey(), userDTO.publicKey());
+        return new User(userDTO.address(), userDTO.privateKey(), userDTO.publicKey(), userDTO.subbedAuctions());
     }
 
     public static UserDTO convertToUserDTO(User user) {
@@ -18,6 +18,7 @@ public class UserMapper {
 
         return new UserDTO(user.getWallet().getAddress(),
                 user.getWallet().getPublicKey(),
-                user.getWallet().getPrivateKey());
+                user.getWallet().getPrivateKey(),
+                user.getSubbedAuctions());
     }
 }

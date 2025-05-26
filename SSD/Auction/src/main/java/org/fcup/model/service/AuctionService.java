@@ -7,15 +7,18 @@ import org.fcup.model.dto.UserDTO;
 import org.fcup.model.dto.mapper.AuctionMapper;
 import org.fcup.model.dto.mapper.BidMapper;
 import org.fcup.model.repository.AuctionBlockchainRepository;
+import org.fcup.model.repository.UserInMemoryRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class AuctionService {
     private final AuctionBlockchainRepository repository;
+    private final UserInMemoryRepository userRepository;
 
     public AuctionService() {
         repository = AuctionBlockchainRepository.getInstance();
+        userRepository = UserInMemoryRepository.getInstance();
     }
 
     public boolean saveAuction(AuctionDTO newAuctionDTO) {
@@ -36,6 +39,7 @@ public class AuctionService {
                 && bidDTO != null
                 && auction.updateBid(BidMapper.convertToBid(bidDTO))) {
             repository.updateAuctions();
+            userRepository.addSubbedAuction(BidMapper.convertToBid(bidDTO).getUser(), auction);
             return repository.update(auction);
         }
 

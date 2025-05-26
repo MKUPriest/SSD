@@ -36,15 +36,15 @@ public class Bootstrap {
 
         BidDTO bidDTO = new BidDTO(0L, defaultUser);
 
-        List<AuctionDTO> auctionDTOList = List.of(new AuctionDTO(itemDTO1, bidDTO, true, LocalDateTime.of(2025, 6,4,16, 0))//,
-                /*new AuctionDTO(itemDTO2, bidDTO, true, LocalDateTime.of(2025, 6,4,16, 0)),
-                *new AuctionDTO(itemDTO3, bidDTO, false, LocalDateTime.of(2025, 4,24,12, 15)),
-                *new AuctionDTO(itemDTO4, bidDTO, false, LocalDateTime.of(2025, 5,5,19, 30)),
-                *new AuctionDTO(itemDTO5, bidDTO, false, LocalDateTime.of(2025, 2,2,9, 45)),
-                *new AuctionDTO(itemDTO6, bidDTO, true, LocalDateTime.of(2025, 8,16,20, 0)),
-                *new AuctionDTO(itemDTO7, bidDTO, true, LocalDateTime.of(2025, 6,12,17, 30)),
-                *new AuctionDTO(itemDTO8, bidDTO, true, LocalDateTime.of(2025, 5,24,10, 15))
-                 */);
+        List<AuctionDTO> auctionDTOList = List.of(new AuctionDTO(itemDTO1, bidDTO, true, LocalDateTime.of(2025, 6,4,16, 0)),
+                new AuctionDTO(itemDTO2, bidDTO, true, LocalDateTime.of(2025, 6,4,16, 0)),
+                new AuctionDTO(itemDTO3, bidDTO, false, LocalDateTime.of(2025, 4,24,12, 15)),
+                new AuctionDTO(itemDTO4, bidDTO, false, LocalDateTime.of(2025, 5,5,19, 30)),
+                new AuctionDTO(itemDTO5, bidDTO, false, LocalDateTime.of(2025, 2,2,9, 45)),
+                new AuctionDTO(itemDTO6, bidDTO, true, LocalDateTime.of(2025, 8,16,20, 0)),
+                new AuctionDTO(itemDTO7, bidDTO, true, LocalDateTime.of(2025, 6,12,17, 30)),
+                new AuctionDTO(itemDTO8, bidDTO, true, LocalDateTime.of(2025, 5,24,10, 15))
+        );
 
 
         auctionDTOList.forEach(auctionController::createAuction);

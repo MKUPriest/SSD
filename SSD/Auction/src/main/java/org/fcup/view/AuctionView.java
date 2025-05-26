@@ -31,7 +31,7 @@ public class AuctionView {
         int option;
 
         do {
-            System.out.println("Please select an option:\n1 - Create Auction\n2 - Bid on an Auction\n3 - Your winning bids\n4 - Your auctioned Items\n5 - Log Out\n6 - Exit");
+            System.out.println("Please select an option:\n1 - Create Auction\n2 - Bid on an Auction\n3 - Your subscribed Auctions\n4 - Your auctioned Items\n5 - Log Out\n6 - Exit");
             System.out.print("Option: ");
 
             option = SCANNER.nextInt();
@@ -88,7 +88,7 @@ public class AuctionView {
                             System.out.print("Auction #" + (index + 1) + " - Item Name: " + activeAuctionDTO.auctionedItemDTO().name() + " & " + "Starting Price: " + activeAuctionDTO.auctionedItemDTO().minimumValue() + " € " + " & " + " Current Bid: " + activeAuctionDTO.bidDTO().currentBid() + " € " + "\n");
                         });
 
-                        System.out.print("Please select the auction you intend to bid on: ");
+                        System.out.print("Please select the auction you intend to bid on and subscribe to: ");
 
                         innerOption = SCANNER.nextInt();
                         validInnerOption = !(innerOption <= 0 || innerOption > activeAuctionsDTO.size() + 1);
@@ -114,7 +114,7 @@ public class AuctionView {
                     IntStream.range(0, winningBids.size()).forEach(index -> {
                         AuctionDTO winningAuctionDTO = winningBids.get(index);
 
-                        System.out.print("Auction #" + (index + 1) + " - Item Name: " + winningAuctionDTO.auctionedItemDTO().name() + " & " + "Your Bid: " + winningAuctionDTO.bidDTO().currentBid() + " € " + "\n");
+                        System.out.print("Auction #" + (index + 1) + " - Item Name: " + winningAuctionDTO.auctionedItemDTO().name() + " & " + "Current Highest Bid: " + winningAuctionDTO.bidDTO().currentBid() + " € " + "\n");
                     });
                     System.out.println("Press Enter to leave");
                     SCANNER.nextLine();
