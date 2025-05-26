@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Miner {
 
@@ -114,16 +115,39 @@ public class Miner {
     }
 
     public Transaction addConfirmedBlock(Block block){
-        Blockchain biggest = null;
 
         for (Blockchain aux : blockchains) {
-            if (biggest == null || aux.getChain().size() > biggest.getChain().size()) {
-                biggest = aux;
+            if(block.getPreviousHash().equals(aux.getChain().getLast().getHash())){
+                aux.addBlock(block);
+            }else{
+                if(block.getPreviousHash().equals(aux.getChain().get(aux.getChain().size() - 2).getHash())){
+                    Blockchain newBlockchain = new Blockchain();
+                    newBlockchain = aux;
+                    newBlockchain.getChain().removeLast();
+                    newBlockchain.getChain().add(block);
+                    blockchains.add(newBlockchain);
+                }
             }
+        }
+        int maxSize = blockchains.stream()
+                .mapToInt(bc -> bc.getChain().size())
+                .max()
+                .orElse(0);
+
+        List<Blockchain> biggestChains = blockchains.stream()
+                .filter(bc -> bc.getChain().size() == maxSize)
+                .toList();
+
+        List<Blockchain> removedChains = blockchains.stream()
+                .filter(bc -> bc.getChain().size() < maxSize)
+                .toList();
+
+        for(Blockchain aux : removedChains){
+            addTransaction(aux.getChain().getLast().getTransactions().getLast());
         }
 
         blockchains.clear();
-        blockchains.add(biggest);
+        blockchains.addAll(biggestChains);
 
         blockchains.getFirst().addBlock(block);
 
